@@ -1,13 +1,20 @@
 import { useState } from 'react'
 import './App.css'
+import { Login } from './components/login'
+import { Admin, Usuario } from './components/home'
+import { Routes, Route } from "react-router";
+import {NotFound} from './components/NotFound';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-<h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/usuario" element={<Usuario />} />
+      <Route path="/*" element={<NotFound />} />
+
+    </Routes>
   )
 }
 
