@@ -1,0 +1,4 @@
+2026-03-05 13:51:03.580381-06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM CANCHAS RESERVAS [*]USUARIOS"
+Syntax error in SQL statement "SELECT * FROM CANCHAS RESERVAS [*]USUARIOS"; SQL statement:
+SELECT * FROM CANCHAS RESERVAS USUARIOS [42000-240]
