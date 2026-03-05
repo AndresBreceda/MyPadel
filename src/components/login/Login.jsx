@@ -1,11 +1,9 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Footer } from "../Footer";
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
-import { Navigate } from "react-router";
 
 export default function Login() {
-    const navigate = use(Navigate);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +16,6 @@ export default function Login() {
       password
     });
 
-    navigate("/usuario")
     // aquí después llamarás tu API
   };
 
