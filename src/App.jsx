@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 import { Login } from './components/login'
-import { Admin, Usuario } from './components/home'
+import { Admin } from './components/Admin'
+import { Usuario } from './components/home'
 import { Routes, Route } from "react-router";
 import {NotFound} from './components/NotFound';
 
