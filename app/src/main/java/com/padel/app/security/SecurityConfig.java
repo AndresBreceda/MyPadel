@@ -32,31 +32,20 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
 
-            // PERMITIR H2 CONSOLE
             .authorizeHttpRequests(auth -> auth
-
-                .requestMatchers("/h2-console/**").permitAll()
-
-                .requestMatchers("/api/auth/**").permitAll()
-
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                .requestMatchers("/api/user/**").hasAnyRole("USER","ADMIN")
-
-                .anyRequest().authenticated()
+                    .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                    .anyRequest().authenticated()
             )
 
-            // NECESARIO PARA QUE H2 FUNCIONE
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.disable())
+            .headers(headers ->
+                    headers.frameOptions(frame -> frame.disable())
             )
 
             .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            .addFilterBefore(jwtFilter,
-                    UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
