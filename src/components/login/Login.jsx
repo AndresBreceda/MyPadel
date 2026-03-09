@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Footer } from "../Footer";
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
+import { Header } from "../Header";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,17 +19,20 @@ export default function Login() {
       password
     });
 
+    if(email === "admin@padel.com" && password === "admin123") {
+      navigate('/admin/users'); // aquí después llamarás tu API y dependiendo de la respuesta navegarás a un lado o a otro
+    }
+
+    if(email === "user@padel.com" && password === "user123") {
+      navigate('/usuario'); // aquí después llamarás tu API y dependiendo de la respuesta navegarás a un lado o a otro
+    }
     // aquí después llamarás tu API
   };
 
   return (
     <div className="h-screen flex flex-col">
 
-      {/* NAVBAR */}
-      <div className="bg-blue-500 h-20 flex items-center px-6 text-white shadow-md border-b border-l-0 border-r-0 border-t-0 border-black border-2">
-        <img className="text-3xl mr-3 w-25 mt-6 absolute" src="/raqueta.png" alt="Logo" />
-        <h1 className="text-2xl font-bold ml-25">My Padel App</h1>
-      </div>
+      <Header></Header>
 
       {/* MAIN */}
       <div

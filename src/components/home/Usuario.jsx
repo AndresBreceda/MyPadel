@@ -1,4 +1,5 @@
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { UserHeader } from "../UserHeader";
 
 export default function Usuario() {
   const courts = [
@@ -10,20 +11,7 @@ export default function Usuario() {
   return (
     <div className="min-h-screen bg-gray-200">
       
-      {/* Navbar */}
-      <div className="bg-blue-500 text-white flex items-center justify-between px-6 py-4">
-        <div className="bg-blue-500 h-20 flex items-center px-6 text-white">
-        <img className="text-3xl mr-3 w-25 mt-6 absolute" src="/raqueta.png" alt="Logo" />
-        <h1 className="text-2xl font-bold ml-25">My Padel App</h1>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center">
-            👤
-          </div>
-          <span className="font-semibold">Usuario</span>
-        </div>
-      </div>
+      <UserHeader />
 
       {/* Content */}
       <div className="p-10">
@@ -39,7 +27,7 @@ export default function Usuario() {
               <p className="font-semibold mb-4">{court.name}</p>
 
               <img
-                src="https://cdn-icons-png.flaticon.com/512/857/857455.png"
+                src="./cancha.png"
                 alt="court"
                 className="w-32 mb-6"
               />
