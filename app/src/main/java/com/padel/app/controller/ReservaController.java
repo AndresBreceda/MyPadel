@@ -30,4 +30,11 @@ public class ReservaController {
     public void cancelarReserva(@PathVariable Long id) {
         reservaService.cancelarReserva(id);
     }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public List<Reserva> obtenerReservasPorUsuario(@PathVariable Long usuarioId) {
+        return reservaService.obtenerReservasPorUsuario(usuarioId);
+    }
+
+
 }

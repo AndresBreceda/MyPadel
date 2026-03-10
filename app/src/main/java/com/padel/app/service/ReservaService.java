@@ -38,4 +38,9 @@ public class ReservaService {
 
         reservaRepository.deleteById(id);
     }
+
+    public List<Reserva> obtenerReservasPorUsuario(Long usuarioId) {
+
+        return reservaRepository.findByUsuarioId(usuarioId);
+    }
 }

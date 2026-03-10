@@ -18,4 +18,28 @@ public class CanchaService {
 
         return canchaRepository.findAll();
     }
+
+    public Cancha obtenerCancha(Long id) {
+        return canchaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
+    }
+
+    public Cancha crearCancha(Cancha cancha) {
+        return canchaRepository.save(cancha);
+    }
+
+    public Cancha actualizarCancha(Long id, Cancha canchaActualizada) {
+
+        Cancha cancha = canchaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
+
+        cancha.setNombre(canchaActualizada.getNombre());
+        cancha.setTipo(canchaActualizada.getTipo());
+
+        return canchaRepository.save(cancha);
+    }
+
+    public void eliminarCancha(Long id) {
+        canchaRepository.deleteById(id);
+    }
 }
