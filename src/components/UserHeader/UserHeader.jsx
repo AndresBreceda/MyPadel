@@ -1,4 +1,4 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 
 export default function UserHeader() {
@@ -22,8 +22,8 @@ export default function UserHeader() {
 
       {/* Usuario */}
       <button onClick={() => navigate('/')} className="flex items-center gap-2">
-        <AccountCircleIcon className="text-white text-3xl" />
-        <span className="font-semibold">Usuario</span>
+        <LogoutIcon className="text-white text-3xl" />
+        <span className="font-semibold">Cerrar sesión</span>
       </button>
 
     </div>

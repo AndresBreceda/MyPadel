@@ -17,13 +17,42 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    // LISTAR
+    @GetMapping
+    public List<Usuario> obtenerUsuarios() {
+        return usuarioService.obtenerUsuarios();
+    }
+
+    // OBTENER UNO
     @GetMapping("/{id}")
     public Usuario obtenerUsuario(@PathVariable Long id) {
         return usuarioService.obtenerUsuario(id);
     }
 
+    // RESERVAS DE USUARIO
     @GetMapping("/{id}/reservas")
     public List<Reserva> reservasUsuario(@PathVariable Long id) {
         return usuarioService.obtenerReservas(id);
+    }
+
+    // CREAR
+    @PostMapping
+    public Usuario crearUsuario(@RequestBody Usuario usuario) {
+        return usuarioService.crearUsuario(usuario);
+    }
+
+    // EDITAR (solo email y password)
+    @PutMapping("/{id}")
+    public Usuario actualizarUsuario(
+            @PathVariable Long id,
+            @RequestBody Usuario usuario) {
+
+        return usuarioService.actualizarUsuario(id, usuario);
+    }
+
+    // ELIMINAR
+    @DeleteMapping("/{id}")
+    public void eliminarUsuario(@PathVariable Long id) {
+        usuarioService.eliminarUsuario(id);
     }
 }

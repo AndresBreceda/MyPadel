@@ -1,14 +1,53 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UserHeader from "../../UserHeader/UserHeader";
 
 export default function Admin() {
-  const [users, setUsers] = useState([
-    { id: 1, email: "usuario@padel.com" },
-    { id: 2, email: "usuario@padel.com" },
-    { id: 3, email: "usuario@padel.com" },
-  ]);
+  const [users, setUser] = useState([]);
+  
+    useEffect(() => {
+  
+      async function fetchUsers() {
+  
+        const token = localStorage.getItem("token");
+
+        console.log(token);
+  
+        try {
+  
+          const response = await fetch("http://localhost:8080/api/usuarios", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          console.log("STATUS:", response.status);
+
+          if (!response.ok) {
+            const text = await response.text();
+            console.log("SERVER RESPONSE:", text);
+            throw new Error("Request failed");
+          }
+
+  
+          const data = await response.json();
+          setUser(data);
+  
+          
+        } catch (error) {
+          console.error("Error fetching courts:", error);
+        }
+  
+      }
+  
+      fetchUsers();
+
+      console.log(users);
+  
+    }, []);
 
   const navigate = useNavigate();
 

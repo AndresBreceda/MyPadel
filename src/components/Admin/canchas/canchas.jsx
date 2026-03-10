@@ -1,14 +1,41 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import UserHeader from "../../UserHeader/UserHeader";
 
 export default function Canchas() {
-  const [users, setUsers] = useState([
-    { id: 1, email: "usuario@padel.com" },
-    { id: 2, email: "usuario@padel.com" },
-    { id: 3, email: "usuario@padel.com" },
-  ]);
+  const [courts, setCourts] = useState([]);
+  
+    useEffect(() => {
+  
+      async function fetchCourts() {
+  
+        const token = localStorage.getItem("token");
+  
+        try {
+  
+          const response = await fetch("http://localhost:8080/api/canchas", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+  
+          const data = await response.json();
+          setCourts(data);
+  
+        } catch (error) {
+          console.error("Error fetching courts:", error);
+        }
+  
+      }
+  
+      fetchCourts();
+  
+      console.log(courts);
+  
+    }, []);
 
   const navigate = useNavigate();
 
@@ -51,9 +78,9 @@ export default function Canchas() {
 
         {/* Lista de usuarios */}
         <div className="flex-1 bg-gray-100 border-2 border-blue-400 rounded-3xl overflow-hidden">
-          {users.map((user, index) => (
+          {courts.map((court, index) => (
             <div
-              key={user.id}
+              key={court.id}
               className="flex items-center justify-between px-6 py-5 border-b border-black"
             >
               <div className="flex items-center gap-4">
@@ -62,7 +89,7 @@ export default function Canchas() {
                 </div>
 
                 <p className="text-lg">
-                  Nombre: {user.email}
+                  Nombre: {court.nombre}
                 </p>
               </div>
 

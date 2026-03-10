@@ -11,23 +11,45 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  async function handleSubmit(e) {
+  e.preventDefault();
 
-    console.log({
-      email,
-      password
+  try {
+
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
     });
 
-    if(email === "admin@padel.com" && password === "admin123") {
-      navigate('/admin/users'); // aquí después llamarás tu API y dependiendo de la respuesta navegarás a un lado o a otro
+    if (!response.ok) {
+      throw new Error("Credenciales incorrectas");
     }
 
-    if(email === "user@padel.com" && password === "user123") {
-      navigate('/usuario'); // aquí después llamarás tu API y dependiendo de la respuesta navegarás a un lado o a otro
+    const data = await response.text();
+
+    console.log(data);
+
+    // guardar token
+    localStorage.setItem("token", data);
+
+    if(email.includes("admin")){
+      navigate("/admin/users");
+    }else{
+      navigate("/usuario");
     }
-    // aquí después llamarás tu API
-  };
+
+
+  } catch (error) {
+    console.error("Login error:", error);
+  }
+}
+
 
   return (
     <div className="h-screen flex flex-col">
