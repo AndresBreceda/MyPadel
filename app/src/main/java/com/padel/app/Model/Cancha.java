@@ -15,10 +15,13 @@ public class Cancha {
 
     private String tipo;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "horarios_cancha", joinColumns = @JoinColumn(name = "cancha_id"))
+    @Column(name = "horario")
+    private List<String> horarios;
+
     @OneToMany(mappedBy = "cancha")
     private List<Reserva> reservas;
-
-    // getters y setters
 
     public Long getId() { return id; }
 
@@ -29,6 +32,10 @@ public class Cancha {
     public String getTipo() { return tipo; }
 
     public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public List<String> getHorarios() { return horarios; }
+
+    public void setHorarios(List<String> horarios) { this.horarios = horarios; }
 
     public List<Reserva> getReservas() { return reservas; }
 

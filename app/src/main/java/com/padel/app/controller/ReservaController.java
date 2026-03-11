@@ -6,6 +6,7 @@ import com.padel.app.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,16 @@ public class ReservaController {
     @GetMapping("/usuario/{usuarioId}")
     public List<Reserva> obtenerReservasPorUsuario(@PathVariable Long usuarioId) {
         return reservaService.obtenerReservasPorUsuario(usuarioId);
+    }
+
+    @GetMapping("/cancha/{id}")
+    public List<Reserva> reservasPorCanchaYFecha(
+            @PathVariable Long id,
+            @RequestParam String fecha) {
+
+        LocalDate fechaReserva = LocalDate.parse(fecha);
+
+        return reservaService.obtenerReservasCanchaFecha(id, fechaReserva);
     }
 
 

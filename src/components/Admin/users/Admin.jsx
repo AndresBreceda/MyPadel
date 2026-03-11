@@ -134,6 +134,59 @@ export default function Admin() {
       }
     }
 
+    async function editarUsuario(user) {
+
+      const { value: formValues } = await Swal.fire({
+        title: "Editar usuario",
+        html: `
+          <input id="swal-email" class="swal2-input" placeholder="Email" value="${user.email}">
+          <input id="swal-password" type="password" class="swal2-input" placeholder="Nuevo password">
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: "Guardar",
+        preConfirm: () => {
+          return {
+            email: document.getElementById("swal-email").value,
+            password: document.getElementById("swal-password").value
+          };
+        }
+      });
+
+      if (!formValues) return;
+
+      const token = localStorage.getItem("token");
+
+      try {
+
+        const response = await fetch(`http://localhost:8080/api/usuarios/${user.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(formValues)
+        });
+
+        if (!response.ok) {
+          throw new Error("Error actualizando usuario");
+        }
+
+        const updatedUser = await response.json();
+
+        setUser(users.map(u => 
+          u.id === user.id ? updatedUser : u
+        ));
+
+        Swal.fire("Actualizado", "Usuario actualizado correctamente", "success");
+
+      } catch (error) {
+
+        Swal.fire("Error", "No se pudo actualizar el usuario", "error");
+
+      }
+  }
+
   const navigate = useNavigate();
 
   return (
@@ -195,7 +248,7 @@ export default function Admin() {
               </div>
 
               <div className="flex gap-4">
-                <button className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-full font-semibold border border-black">
+                <button onClick={() => editarUsuario(user)} className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-full font-semibold border border-black">
                   Editar
                 </button>
 

@@ -15,6 +15,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     List<Reserva> findByFecha(LocalDate fecha);
 
+    List<Reserva> findByCanchaIdAndFecha(Long canchaId, LocalDate fecha);
+
     boolean existsByCanchaIdAndFechaAndHorario(
             Long canchaId,
             LocalDate fecha,

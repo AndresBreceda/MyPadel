@@ -121,6 +121,61 @@ export default function Canchas() {
           }
         }
 
+        async function editarCancha(court) {
+        
+              const { value: formValues } = await Swal.fire({
+                title: "Editar cancha",
+                html: `
+                  <input id="swal-nombre" class="swal2-input" placeholder="Nombre" value="${court.nombre}">
+                  <input id="swal-tipo" class="swal2-input" placeholder="Tipo" value="${court.tipo}">
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: "Guardar",
+                preConfirm: () => {
+                  return {
+                    nombre: document.getElementById("swal-nombre").value,
+                    tipo: document.getElementById("swal-tipo").value
+                  };
+                }
+              });
+        
+              if (!formValues) return;
+        
+              const token = localStorage.getItem("token");
+        
+              try {
+        
+                const response = await fetch(`http://localhost:8080/api/canchas/${court.id}`, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                  },
+                  body: JSON.stringify(formValues)
+                });
+        
+                if (!response.ok) {
+                  throw new Error("Error actualizando cancha");
+                }
+        
+                const updatedCourt = await response.json();
+        
+                setCourts(courts.map(c => 
+                  c.id === court.id ? updatedCourt : c
+                ));
+        
+                Swal.fire("Actualizado", "Cancha actualizada correctamente", "success");
+        
+              } catch (error) {
+        
+                Swal.fire("Error", "No se pudo actualizar la cancha", "error");
+        
+              }
+            }
+
+
+
 
   const navigate = useNavigate();
 
@@ -183,7 +238,7 @@ export default function Canchas() {
               </div>
 
               <div className="flex gap-4">
-                <button className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-full font-semibold border border-black">
+                <button onClick={() => editarCancha(court)} className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-full font-semibold border border-black">
                   Editar
                 </button>
 

@@ -48,13 +48,21 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario actualizarUsuario(Long id, Usuario usuarioActualizado) {
+    public Usuario actualizarUsuario(Long id, Usuario datos) {
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        usuario.setEmail(usuarioActualizado.getEmail());
-        usuario.setPassword(usuarioActualizado.getPassword());
+        // actualizar email
+        usuario.setEmail(datos.getEmail());
+
+        // actualizar password SOLO si viene uno nuevo
+        if (datos.getPassword() != null && !datos.getPassword().isEmpty()) {
+
+            String passwordHash = passwordEncoder.encode(datos.getPassword());
+
+            usuario.setPassword(passwordHash);
+        }
 
         return usuarioRepository.save(usuario);
     }

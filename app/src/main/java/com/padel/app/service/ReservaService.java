@@ -6,6 +6,7 @@ import com.padel.app.repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -42,5 +43,9 @@ public class ReservaService {
     public List<Reserva> obtenerReservasPorUsuario(Long usuarioId) {
 
         return reservaRepository.findByUsuarioId(usuarioId);
+    }
+
+    public List<Reserva> obtenerReservasCanchaFecha(Long id, LocalDate fechaReserva) {
+        return reservaRepository.findByCanchaIdAndFecha(id, fechaReserva);
     }
 }
