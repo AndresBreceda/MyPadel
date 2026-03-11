@@ -3,9 +3,14 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
 import UserHeader from "../../UserHeader/UserHeader";
+import Swal from "sweetalert2";
+
 
 export default function Canchas() {
-  const [courts, setCourts] = useState([]);
+    const [courts, setCourts] = useState([]);
+
+    const [nombre, setNombre] = useState("");
+    const [tipo, setTipo] = useState("");
   
     useEffect(() => {
   
@@ -37,6 +42,86 @@ export default function Canchas() {
   
     }, []);
 
+    async function crearCancha() {
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:8080/api/canchas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          tipo: tipo
+        })
+      });
+
+      if (!response.ok) {
+        console.log("error creando cancha");
+        return;
+      }
+
+      const nuevaCancha = await response.json();
+
+      setCourts([...courts, nuevaCancha]);
+
+      setNombre("");
+      setTipo("");
+    }
+
+    async function eliminarCancha(id) {
+    
+          const confirmacion = await Swal.fire({
+            title: "¿Eliminar cancha?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+          });
+    
+          if (!confirmacion.isConfirmed) return;
+    
+          const token = localStorage.getItem("token");
+    
+          try {
+    
+            const response = await fetch(`http://localhost:8080/api/canchas/${id}`, {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error("No se pudo eliminar");
+            }
+    
+            // actualizar lista
+            setCourts(courts.filter(court => court.id !== id));
+    
+            Swal.fire(
+              "Eliminado",
+              "La cancha fue eliminada",
+              "success"
+            );
+    
+          } catch (error) {
+    
+            Swal.fire(
+              "Error",
+              "No se pudo eliminar la cancha",
+              "error"
+            );
+    
+          }
+        }
+
+
   const navigate = useNavigate();
 
   return (
@@ -63,15 +148,19 @@ export default function Canchas() {
           <input
             type="text"
             className="w-full border border-gray-500 p-2 mb-4"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
           />
 
-          <label className="block mb-2 text-lg">Horarios:</label>
+          <label className="block mb-2 text-lg">Ubicación:</label>
           <input
-            type="password"
+            type="text"
             className="w-full border border-gray-500 p-2 mb-8"
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
           />
 
-          <button className="bg-green-700 hover:bg-green-800 text-white w-full py-3 rounded-full text-lg font-semibold">
+          <button onClick={crearCancha} className="bg-green-700 hover:bg-green-800 text-white w-full py-3 rounded-full text-lg font-semibold">
             Agregar
           </button>
         </div>
@@ -98,7 +187,7 @@ export default function Canchas() {
                   Editar
                 </button>
 
-                <button className="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-full font-semibold border border-black">
+                <button onClick={() => eliminarCancha(court.id)} className="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-full font-semibold border border-black">
                   Borrar
                 </button>
               </div>

@@ -6,6 +6,7 @@ import com.padel.app.repository.ReservaRepository;
 import com.padel.app.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +36,15 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Usuario crearUsuario(Usuario usuario) {
+
+        usuario.setPassword(
+            passwordEncoder.encode(usuario.getPassword())
+        );
+
         return usuarioRepository.save(usuario);
     }
 

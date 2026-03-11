@@ -3,9 +3,13 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import UserHeader from "../../UserHeader/UserHeader";
+import Swal from "sweetalert2";
 
 export default function Admin() {
   const [users, setUser] = useState([]);
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
   
     useEffect(() => {
   
@@ -49,6 +53,87 @@ export default function Admin() {
   
     }, []);
 
+
+    async function crearUsuario() {
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:8080/api/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          rol: "USER"
+        })
+      });
+
+      if (!response.ok) {
+        console.log("error creando usuario");
+        return;
+      }
+
+      const nuevoUsuario = await response.json();
+
+      setUser([...users, nuevoUsuario]);
+
+      setEmail("");
+      setPassword("");
+    }
+
+    async function eliminarUsuario(id) {
+
+      const confirmacion = await Swal.fire({
+        title: "¿Eliminar usuario?",
+        text: "Esta acción no se puede deshacer",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+      });
+
+      if (!confirmacion.isConfirmed) return;
+
+      const token = localStorage.getItem("token");
+
+      try {
+
+        const response = await fetch(`http://localhost:8080/api/usuarios/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("No se pudo eliminar");
+        }
+
+        // actualizar lista
+        setUser(users.filter(user => user.id !== id));
+
+        Swal.fire(
+          "Eliminado",
+          "El usuario fue eliminado",
+          "success"
+        );
+
+      } catch (error) {
+
+        Swal.fire(
+          "Error",
+          "No se pudo eliminar el usuario",
+          "error"
+        );
+
+      }
+    }
+
   const navigate = useNavigate();
 
   return (
@@ -75,15 +160,19 @@ export default function Admin() {
           <input
             type="text"
             className="w-full border border-gray-500 p-2 mb-4"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <label className="block mb-2 text-lg">Password:</label>
           <input
             type="password"
             className="w-full border border-gray-500 p-2 mb-8"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button className="bg-green-700 hover:bg-green-800 text-white w-full py-3 rounded-full text-lg font-semibold">
+          <button onClick={crearUsuario} className="bg-green-700 hover:bg-green-800 text-white w-full py-3 rounded-full text-lg font-semibold">
             Agregar
           </button>
         </div>
@@ -110,7 +199,7 @@ export default function Admin() {
                   Editar
                 </button>
 
-                <button className="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-full font-semibold border border-black">
+                <button onClick={() => eliminarUsuario(user.id)} className="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-full font-semibold border border-black">
                   Borrar
                 </button>
               </div>
