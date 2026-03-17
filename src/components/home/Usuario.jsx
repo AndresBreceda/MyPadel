@@ -4,8 +4,8 @@ import { UserHeader } from "../UserHeader";
 export default function Usuario() {
 
   const [courts, setCourts] = useState([]);
-  const [reservas, setReservas] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [misReservas, setMisReservas] = useState([]);
+  const [horarioSeleccionado, setHorarioSeleccionado] = useState({});
 
   useEffect(() => {
 
@@ -28,42 +28,23 @@ export default function Usuario() {
 
   }, []);
 
-  async function obtenerReservas(canchaId) {
+  function reservarDemo(court, hora) {
 
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(
-      `http://localhost:8080/api/reservas/cancha/${canchaId}?fecha=${selectedDate}`,
+    // Guardar reserva en frontend
+    setMisReservas(prev => [
+      ...prev,
       {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        canchaId: court.id,
+        nombre: court.nombre,
+        hora
       }
-    );
+    ]);
 
-    const data = await response.json();
-
-    return data.map(r => r.horario);
-  }
-
-  async function reservar(canchaId, hora) {
-
-    const token = localStorage.getItem("token");
-
-    await fetch("http://localhost:8080/api/reservas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        canchaId,
-        horario: hora,
-        fecha: selectedDate
-      })
-    });
-
-    alert("Reserva creada");
+    // limpiar selección
+    setHorarioSeleccionado(prev => ({
+      ...prev,
+      [court.id]: ""
+    }));
 
   }
 
@@ -72,43 +53,40 @@ export default function Usuario() {
 
       <UserHeader />
 
-      <div className="p-10">
+      <div className="flex p-10 gap-10">
 
-        <h2 className="text-2xl font-bold mb-6">Selecciona fecha</h2>
+        {/* 🔹 PANEL IZQUIERDO */}
+        <div className="w-1/4 bg-white rounded-2xl p-5 shadow-lg h-fit">
 
-        <div className="flex items-center gap-4 mb-10">
+          <h2 className="text-xl font-bold mb-4">Mis reservas</h2>
 
-          <label className="text-lg font-semibold">
-            Fecha:
-          </label>
+          {misReservas.length === 0 && (
+            <p className="text-gray-500">No tienes reservas</p>
+          )}
 
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="
-              bg-white
-              border-2 border-blue-400
-              rounded-xl
-              px-4 py-2
-              text-lg
-              shadow-sm
-              focus:outline-none
-              focus:ring-2
-              focus:ring-blue-400
-              hover:border-blue-500
-              transition
-            "
-          />
+          {misReservas.map((res, index) => (
+            <div
+              key={index}
+              className="mb-3 p-3 bg-blue-100 rounded-xl"
+            >
+              <p className="font-bold">{res.nombre}</p>
+              <p>{res.hora}</p>
+            </div>
+          ))}
 
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10">
+        {/* 🔹 CANCHAS */}
+        <div className="grid md:grid-cols-2 gap-10 flex-1">
 
           {courts.map((court) => {
 
-            const horariosDisponibles = court.horarios?.filter(
-              h => !reservas.includes(h)
+            const horariosOcupados = misReservas
+              .filter(r => r.canchaId === court.id)
+              .map(r => r.hora);
+
+            const disponibles = court.horarios?.filter(
+              h => !horariosOcupados.includes(h)
             );
 
             return (
@@ -126,21 +104,37 @@ export default function Usuario() {
                   className="w-32 mb-6"
                 />
 
-                <div className="grid grid-cols-2 gap-2">
+                {/* 🔽 DROPDOWN */}
+                <select
+                  value={horarioSeleccionado[court.id] || ""}
+                  onChange={(e) =>
+                    setHorarioSeleccionado({
+                      ...horarioSeleccionado,
+                      [court.id]: e.target.value
+                    })
+                  }
+                  className="mb-4 p-2 rounded-lg border"
+                >
+                  <option value="">Selecciona horario</option>
 
-                {court.horarios?.map((hora) => (
+                  {disponibles.map((hora) => (
+                    <option key={hora} value={hora}>
+                      {hora}
+                    </option>
+                  ))}
 
-                  <button
-                    key={hora}
-                    onClick={() => reservar(court.id, hora)}
-                    className="bg-green-500 hover:bg-green-600 px-6 py-2 rounded-full"
-                  >
-                    {hora}
-                  </button>
+                </select>
 
-                ))}
-
-              </div>
+                {/* 🔘 BOTÓN RESERVAR */}
+                <button
+                  disabled={!horarioSeleccionado[court.id]}
+                  onClick={() =>
+                    reservarDemo(court, horarioSeleccionado[court.id])
+                  }
+                  className="bg-green-500 disabled:bg-gray-400 px-6 py-2 rounded-full"
+                >
+                  Reservar
+                </button>
 
               </div>
             );
