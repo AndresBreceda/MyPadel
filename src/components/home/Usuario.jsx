@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserHeader } from "../UserHeader";
+import Swal from "sweetalert2";
+import ClearIcon from '@mui/icons-material/Clear';
 
 export default function Usuario() {
 
@@ -48,6 +50,29 @@ export default function Usuario() {
 
   }
 
+  function eliminarReserva(index) {
+
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta reserva se eliminará",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+
+        setMisReservas(prev =>
+          prev.filter((_, i) => i !== index)
+        );
+
+        Swal.fire("Eliminado", "La reserva fue eliminada", "success");
+      }
+
+    });
+  }
+
   return (
     <div className="min-h-screen bg-gray-200">
 
@@ -67,10 +92,19 @@ export default function Usuario() {
           {misReservas.map((res, index) => (
             <div
               key={index}
-              className="mb-3 p-3 bg-blue-100 rounded-xl"
+              className="mb-3 p-3 bg-blue-100 rounded-xl flex justify-between items-center"
             >
-              <p className="font-bold">{res.nombre}</p>
-              <p>{res.hora}</p>
+              <div>
+                <p className="font-bold">{res.nombre}</p>
+                <p>{res.hora}</p>
+              </div>
+
+              <button
+                onClick={() => eliminarReserva(index)}
+                className="bg-red-600 text-white px-3 py-1 rounded-lg"
+              >
+                <ClearIcon />
+              </button>
             </div>
           ))}
 

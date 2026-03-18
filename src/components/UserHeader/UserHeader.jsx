@@ -22,7 +22,7 @@ export default function UserHeader() {
         const API_KEY = "da853f6538a78a7ab1178e4502c74d09";
 
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=MexicoCity&appid=${API_KEY}&units=metric&lang=es`
+          `https://api.openweathermap.org/data/2.5/weather?q=Aguascalientes&appid=${API_KEY}&units=metric&lang=es`
         );
 
         const data = await response.json();
